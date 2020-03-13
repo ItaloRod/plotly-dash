@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
 '''
-    Objetivo: O número de funcionários para a quantidade de vínculos.
-    Pergunta: Quantos funcionários tem 8 vínculos? Ou 5 vínculos?
-    Observação: CNS é a identificação dos profissionais da saúde. Todo profissional se repete. 
+    Objetivo: O número de Médicos pela a quantidade de vínculos.
+    Pergunta: Quantos Médicos tem 8 vínculos? Ou 5 vínculos?
+    Observação: 
+    * CNS é a identificação dos profissionais da saúde. Todo profissional se repete.
+    * Cada vínculo é em qual local aquele usuário está alocado. Quanto mais ele se repetir, mais alocado ele está.
 '''
 import dash
 import dash_core_components as dcc
@@ -13,17 +15,15 @@ import connection as conn
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
-df = conn.getProfessionals()
-print(df)
+df = conn.getProfessionalsCsv()
 df = df[df['cns'] != ''] # remove valores vazios
-# number_vim = pd.DataFrame(data = {
-#     'num_vim' : df.groupby(['cns']).count()
-# })
-df = df.groupby(['cns']).count()
-df.to_csv(r'output.csv')
-df['vinculos'] = df.cnes
-df = df.groupby(['vinculos']).count()
-df['cnes'].to_csv(r'output2.csv')
+df = df[df['cbodescricao'].str.match('MEDICO')] # Pega quem é médico 
+
+df = df.groupby(['cns']).count() # Agrupa por CNS e conta
+# df.to_csv(r'output.csv')
+df['vinculos'] = df.cnes 
+df = df.groupby(['vinculos']).count() # Agrupa pelo Vínculo e conta
+# df['cnes'].to_csv(r'output2.csv')
 
 print(df)
                           
