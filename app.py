@@ -10,47 +10,32 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-import pandas as pd
-import connection as conn
+import controller as ct
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
-df = conn.getProfessionalsCsv()
-df = df[df['cns'] != ''] # remove valores vazios
-df = df[df['cbodescricao'].str.match('MEDICO')] # Pega quem é médico 
+df = ct.getProfessionalsByBond()
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
-df = df.groupby(['cns']).count() # Agrupa por CNS e conta
-# df.to_csv(r'output.csv')
-df['vinculos'] = df.cnes 
-df = df.groupby(['vinculos']).count() # Agrupa pelo Vínculo e conta
-# df['cnes'].to_csv(r'output2.csv')
+app.layout = html.Div(children=[
+    html.H1(children='Quantidade de Vínculos por número de funcionários'),
 
-print(df)
-                          
-# num_prof = number_vim.groupby(['cnes']).count()
-# print(number_vim['cns'])
+    html.Div(children='''
+        Dados obtidos a partir de uma planilha Excel
+    '''),
 
-# app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+    dcc.Graph(
+        id='example-graph',
+        figure={
+            'data': [
+                {'x': df['x'], 'y': df['y'], 'type': 'bar', 'name': 'Quantidade de vínculos por nº de'},
+            ],
+            'layout': {
+                'title': 'Gráfico em barras'
+            }
+        }
+    )
+])
 
-# app.layout = html.Div(children=[
-#     html.H1(children='Quantidade de Vínculos por número de funcionários'),
-
-#     html.Div(children='''
-#         Dados obtidos a partir de uma planilha Excel
-#     '''),
-
-#     dcc.Graph(
-#         id='example-graph',
-#         figure={
-#             'data': [
-#                 {'x': df['x'], 'y': df['y'], 'type': 'bar', 'name': 'Quantidade de vínculos por nº de'},
-#             ],
-#             'layout': {
-#                 'title': 'Gráfico em barras'
-#             }
-#         }
-#     )
-# ])
-
-# if __name__ == '__main__':
-#     app.run_server(debug=True)
+if __name__ == '__main__':
+    app.run_server(debug=True)
