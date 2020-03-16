@@ -1,13 +1,12 @@
-import connection as conn
 import pandas as pd
 
-def getProfessionalsByBond():
+def getNumberProfessionalsByBond():
     '''
         tras todos os profissionais pelo vinculo
         retorna:
             Pandas DataFrame
     '''
-    df = conn.getProfessionalsCsv() # Carrega os dados
+    df = pd.read_csv('profissionais.csv')
     df = df[df['cns'] != ''] # remove valores vazios
     df = df[df['cbodescricao'].str.match('MEDICO')] # Pega quem é médico 
     df = df.groupby(['cns']).count() # Agrupa por CNS e conta
